@@ -1,26 +1,24 @@
-require('dotenv').config();
-require('@nomiclabs/hardhat-waffle');
+require("@nomicfoundation/hardhat-toolbox");
 
-const PRIVATE_KEY = process.env.PRIVATE_KEY;
+/** @type import('hardhat/config').HardhatUserConfig */
 
-const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY || '';
+require("dotenv").config();
+require("@nomiclabs/hardhat-ethers");
+const { API_URL, PRIVATE_KEY, POLYGONSCAN_KEY } = process.env;
 
 module.exports = {
-  defaultNetwork: 'hardhat',
+  solidity: "0.8.7",
+  defaultNetwork: "mumbai",
   networks: {
     hardhat: {},
     mumbai: {
-      url: `https://polygon-mumbai.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
-      accounts: [PRIVATE_KEY],
+      url: API_URL,
+      accounts: [`0x${PRIVATE_KEY}`],
     },
   },
-  solidity: {
-    version: '0.8.7',
-    settings: {
-      optimizer: {
-        enabled: true,
-        runs: 200,
-      },
+  etherscan: {
+    apiKey: {
+      polygonMumbai: POLYGONSCAN_KEY,
     },
   },
 };

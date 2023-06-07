@@ -54,7 +54,7 @@ const WalletCard = () => {
   const getCurrentTime = () => {
     if (window.ethereum && window.ethereum.isMetaMask) {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const contractAddress = '0xd9145CCE52D386f254917e481eB44e9943F39138';
+      const contractAddress = '0x047256F2B6896404876D5eF8ecC361F5d7dE56Bc';
       const contractABI = require('./ContractAbi.json');
 
       const contract = new ethers.Contract(contractAddress, contractABI, provider);
@@ -71,7 +71,7 @@ const WalletCard = () => {
   const getCurrentDate = () => {
     if (window.ethereum && window.ethereum.isMetaMask) {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const contractAddress = '0xd9145CCE52D386f254917e481eB44e9943F39138';
+      const contractAddress = '0x047256F2B6896404876D5eF8ecC361F5d7dE56Bc';
       const contractABI = require('./ContractAbi.json');
 
       const contract = new ethers.Contract(contractAddress, contractABI, provider);
@@ -88,7 +88,7 @@ const WalletCard = () => {
   const getCallerAddress = () => {
     if (window.ethereum && window.ethereum.isMetaMask) {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const contractAddress = '0xd9145CCE52D386f254917e481eB44e9943F39138';
+      const contractAddress = '0x047256F2B6896404876D5eF8ecC361F5d7dE56Bc';
       const contractABI = require('./ContractAbi.json');
 
       const contract = new ethers.Contract(contractAddress, contractABI, provider);
