@@ -1,16 +1,22 @@
 import './App.css';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import './WalletCard.css';
 
-const WalletCard = () => {
+const App = () => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [defaultAccount, setDefaultAccount] = useState(null);
   const [userBalance, setUserBalance] = useState(null);
   const [connButtonText, setConnButtonText] = useState('Connect Wallet');
   const [currentTime, setCurrentTime] = useState(null);
   const [currentDate, setCurrentDate] = useState(null);
-  const [callerAddress, setCallerAddress] = useState(null);
+
+  useEffect(() => {
+    if (defaultAccount) {
+      getCurrentTime();
+      getCurrentDate();
+    }
+  }, [defaultAccount]);
 
   const connectWalletHandler = () => {
     if (window.ethereum && window.ethereum.isMetaMask) {
@@ -18,120 +24,109 @@ const WalletCard = () => {
 
       window.ethereum
         .request({ method: 'eth_requestAccounts' })
-        .then((result) => {
+        .then(result => {
           accountChangedHandler(result[0]);
           setConnButtonText('Wallet Connected');
           getAccountBalance(result[0]);
-          getCurrentTime();
-          getCurrentDate();
-          getCallerAddress();
         })
-        .catch((error) => {
+        .catch(error => {
           setErrorMessage(error.message);
         });
     } else {
       console.log('Need to install MetaMask');
-      setErrorMessage('Please install MetaMask browser extension to interact');
+      setErrorMessage(
+        'Please install MetaMask browser extension to interact'
+      );
     }
   };
 
-  const accountChangedHandler = (newAccount) => {
+  const accountChangedHandler = newAccount => {
     setDefaultAccount(newAccount);
     getAccountBalance(newAccount.toString());
   };
 
-  const getAccountBalance = (account) => {
+  const getAccountBalance = account => {
     window.ethereum
       .request({ method: 'eth_getBalance', params: [account, 'latest'] })
-      .then((balance) => {
+      .then(balance => {
         setUserBalance(ethers.utils.formatEther(balance));
       })
-      .catch((error) => {
+      .catch(error => {
         setErrorMessage(error.message);
       });
   };
 
   const getCurrentTime = () => {
-    if (window.ethereum && window.ethereum.isMetaMask) {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const contractAddress = '0x047256F2B6896404876D5eF8ecC361F5d7dE56Bc';
-      const contractABI = require('./ContractAbi.json');
+    const contractAddress = '0xd027a3362e00238fF91b344ed028FCcf43850900';
+    const contractABI = require('./ContractAbi.json');
 
-      const contract = new ethers.Contract(contractAddress, contractABI, provider);
-      contract.getCurrentTime()
-        .then((time) => {
-          setCurrentTime(time.toString());
-        })
-        .catch((error) => {
-          setErrorMessage(error.message);
-        });
-    }
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const contract = new ethers.Contract(contractAddress, contractABI, provider);
+
+    contract
+      .getCurrentTime()
+      .then(result => {
+        setCurrentTime(new Date(result * 1000).toLocaleTimeString());
+      })
+      .catch(error => {
+        setErrorMessage(error.message);
+      });
   };
 
   const getCurrentDate = () => {
-    if (window.ethereum && window.ethereum.isMetaMask) {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const contractAddress = '0x047256F2B6896404876D5eF8ecC361F5d7dE56Bc';
-      const contractABI = require('./ContractAbi.json');
+    const contractAddress = '0xd027a3362e00238fF91b344ed028FCcf43850900';
+    const contractABI = require('./ContractAbi.json');
 
-      const contract = new ethers.Contract(contractAddress, contractABI, provider);
-      contract.getCurrentDate()
-        .then((date) => {
-          setCurrentDate(date.toString());
-        })
-        .catch((error) => {
-          setErrorMessage(error.message);
-        });
-    }
-  };
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const contract = new ethers.Contract(contractAddress, contractABI, provider);
 
-  const getCallerAddress = () => {
-    if (window.ethereum && window.ethereum.isMetaMask) {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const contractAddress = '0x047256F2B6896404876D5eF8ecC361F5d7dE56Bc';
-      const contractABI = require('./ContractAbi.json');
-
-      const contract = new ethers.Contract(contractAddress, contractABI, provider);
-      contract.getCallerAddress()
-        .then((address) => {
-          setCallerAddress(address);
-        })
-        .catch((error) => {
-          setErrorMessage(error.message);
-        });
-    }
+    contract
+      .getCurrentDate()
+      .then(result => {
+        setCurrentDate(
+          new Date(result * 86400 * 1000).toLocaleDateString()
+        );
+      })
+      .catch(error => {
+        setErrorMessage(error.message);
+      });
   };
 
   const chainChangedHandler = () => {
+    // reload the page to avoid any errors with chain change mid-use of application
     window.location.reload();
   };
 
+  // listen for account changes
   window.ethereum.on('accountsChanged', accountChangedHandler);
+
   window.ethereum.on('chainChanged', chainChangedHandler);
 
   return (
     <div className='walletCard'>
-      <h4>Connect Metamask</h4>
+      <div className='walletCardContent'>
+      <h2>Connect Ethereum Wallet</h2> 
+      <h4>This platform is built on the Polygon Munbai Network</h4>
       <button onClick={connectWalletHandler}>{connButtonText}</button>
       <div className='accountDisplay'>
-        <h3>Address: {defaultAccount}</h3>
+        <h3>User's Active Address: {defaultAccount}</h3>
       </div>
       <div className='balanceDisplay'>
-        <h3>Balance: {userBalance}</h3>
+        <h3>User's Current Balance: {userBalance}</h3>
       </div>
-      <div>
-        <h3>Current Time: {currentTime}</h3>
+      <br></br>
+      <h2>My two Additional Functions</h2>
+      <div className='timeDisplay'>
+        <h3>Time Now is: {currentTime}</h3>
       </div>
-      <div>
-        <h3>Current Date: {currentDate}</h3>
+      <div className='dateDisplay'>
+        <h3>Today's Date is: {currentDate}</h3>
       </div>
-      <div>
-        <h3>Caller Address: {callerAddress}</h3>
-      </div>
+      <br></br>
       {errorMessage}
+      </div>
     </div>
   );
 };
 
-export default WalletCard;
-
+export default App;
