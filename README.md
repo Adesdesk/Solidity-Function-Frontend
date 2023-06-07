@@ -14,10 +14,10 @@ This program is a simple contract written in Solidity, a programming language us
 * To run it locally, clone this repository to your local computer and open a split (two segments) terminal.
 * In one terminal, navigate (cd) into the folder functions-contract and run npm install
 * Open the folder in a code editor like VSCode
-* Create a .env file in the root functions-contract directory and store your RPC url, Metamask wallet private key etc. as illustrated below
+* Create a .env file in the root functions-contract directory and store your API url, Metamask wallet private key etc. as illustrated below;
 
 ```
-API_URL = "Replace with your actual rpc url" 
+API_URL = "Replace with your actual API url" 
 PRIVATE_KEY = "Replace with your actual Metamask private key" 
 POLYGONSCAN_KEY = "Replace with your Polygonscan API key" 
 ```
